@@ -1,0 +1,40 @@
+rm(list=ls())
+gc()
+library(ffbase)
+library(tidyverse)
+library(readr)
+setwd("E:/Users/User/Downloads/ALUNO2019")
+load.ffdf(dir="E:/Users/User/Downloads/ALUNO2019") #diretório completo
+idx<-ffwhich(ALUNO, CO_IES==582 & CO_CURSO==13858)
+#==================================================
+  
+ALUNO_ENGCIVIL<- ALUNO[idx,][,]
+ALUNO_ENGCIVIL <-ALUNO_ENGCIVIL %>%
+  select(CO_IES, CO_CURSO, TP_SEXO, TP_SITUACAO, NU_IDADE,
+         IN_ATIVIDADE_EXTRACURRICULAR,TP_COR_RACA) 
+
+write.csv(ALUNO_ENGCIVIL, "ALUNO_ENGCIVIL_2019.csv")
+
+#=== Removendo os falecidos do banco de dados e transformando... ===
+#====== ... a covariável idade em variável politômica ordinal ======
+  
+ALUNO_EC <- read_csv("ALUNO_ENGCIVIL_2019.csv") %>%
+  mutate(C_IDADE= ifelse(NU_IDADE>=18 & NU_IDADE<25,"1",
+                         ifelse(NU_IDADE>=25 & NU_IDADE<32,"2",      
+                                ifelse(NU_IDADE>=32 & NU_IDADE<39,"3",
+                                       ifelse(NU_IDADE>=39 & NU_IDADE<46,"4",
+                                              ifelse(NU_IDADE>=46 & NU_IDADE<53,"5",
+                                                     "6")))))
+) %>%
+mutate(SITUACAO= ifelse(TP_SITUACAO==2,"RETIDO",
+                        ifelse(TP_SITUACAO==3,"RETIDO",      
+                               ifelse(TP_SITUACAO==6,"RETIDO",
+                                      ifelse(TP_SITUACAO==7,"FALECIDO",
+                                             "EVADIDO"))))
+) %>%
+filter(SITUACAO!="FALECIDO") 
+write.csv(ALUNO_EC, "ALUNO_ENGCIVIL_2019.csv")
+attach(ALUNO_EC)
+plot(C_IDADE) #verificação
+
+
