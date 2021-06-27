@@ -19,12 +19,9 @@ write.csv(ALUNO_ENGCIVIL, "ALUNO_ENGCIVIL_2019.csv")
 #====== ... a covariável idade em variável politômica ordinal ======
   
 ALUNO_EC <- read_csv("ALUNO_ENGCIVIL_2019.csv") %>%
-  mutate(C_IDADE= ifelse(NU_IDADE>=18 & NU_IDADE<25,"1",
-                         ifelse(NU_IDADE>=25 & NU_IDADE<32,"2",      
-                                ifelse(NU_IDADE>=32 & NU_IDADE<39,"3",
-                                       ifelse(NU_IDADE>=39 & NU_IDADE<46,"4",
-                                              ifelse(NU_IDADE>=46 & NU_IDADE<53,"5",
-                                                     "6")))))
+  mutate(C_IDADE= ifelse(NU_IDADE>=18 & NU_IDADE<23,"Classe 1",
+                         ifelse(NU_IDADE>=23 & NU_IDADE<30,"Classe 2",      
+                                       "Classe 3"))
 ) %>%
 mutate(SITUACAO= ifelse(TP_SITUACAO==2,"RETIDO",
                         ifelse(TP_SITUACAO==3,"RETIDO",      
@@ -35,6 +32,6 @@ mutate(SITUACAO= ifelse(TP_SITUACAO==2,"RETIDO",
 filter(SITUACAO!="FALECIDO") 
 write.csv(ALUNO_EC, "ALUNO_ENGCIVIL_2019.csv")
 attach(ALUNO_EC)
-plot(C_IDADE) #verificação
+table(C_IDADE) #verificação
 
 
