@@ -42,9 +42,9 @@ mutate(N_SITUACAO= ifelse(TP_SITUACAO==2,"Retido",
                                       ifelse(TP_SITUACAO==7,"Falecido",
                                              "Evadido"))))
 ) %>%
-filter(SITUACAO!="Falecido") 
-write.csv(ALUNO_EC, "ALUNO_ENGCIVIL_2019.csv")
+filter(N_SITUACAO!="Falecido") 
 attach(ALUNO_EC)
+
 
 #=== Tabela das variáveis
 x1<-table(N_SEXO)
@@ -82,12 +82,141 @@ final1<- rbind(cbind(y1,py1),
                cbind(y4,py4)
 )
 kable(final1, caption = "Tabelas de contingência considerando com valores absolutos e percentuais das variáveis qualitativas, considerando a variável SITUAÇÃO reagrupada como desfecho.") %>%
-  kable_styling(font_size = 5) %>%
+  kable_styling(font_size = 12) %>%
   add_header_above(c("",n=2,Percentual=2)) %>%
   pack_rows("SEXO", 1, 2) %>%
   pack_rows("ATIVIDADE EXTRACURRICULAR", 3, 4) %>%
   pack_rows("IDADE", 5, 7) %>%
   pack_rows("RAÇA", 8, 13) 
 
+py1l<-round(prop.table(y1,1)*100,2)
+py2l<-round(prop.table(y2,1)*100,2)
+py3l<-round(prop.table(y3,1)*100,2)
+py4l<-round(prop.table(y4,1)*100,2)
+final2<- rbind(py1l,
+               py2l,
+               py3l,
+               py4l
+)
+kable(final2, caption = "Tabelas de contingência com marginais linha das variáveis qualitativas, considerando a variável SITUAÇÃO reagrupada como desfecho.") %>%
+  kable_styling(font_size = 12) %>%
+  pack_rows("SEXO", 1, 2) %>%
+  pack_rows("ATIVIDADE EXTRACURRICULAR", 3, 4) %>%
+  pack_rows("IDADE", 5, 7) %>%
+  pack_rows("RAÇA", 8, 13) 
 
 
+#============= DASHBOARD ===========#
+library(plotly)
+
+# DASHBOARD PAGINA 1
+### Gráfico de barras para cada variável
+g1<-ggplot(data=ALUNO_EC, aes(x=N_SITUACAO)) +
+  geom_bar() +
+  labs(x="",y="Quantidade de alunos") +
+  theme(panel.background = element_rect(fill="White"),
+        axis.text.x = element_text(face="bold",
+                                   color=1,vjust = .6,                            size=9.5, angle=30)
+  )
+ggplotly(g1)
+
+g2<-ggplot(data=ALUNO_EC, aes(x=N_SEXO)) +
+  geom_bar() +
+  labs(x="",y="Quantidade de alunos") +
+  theme(panel.background = element_rect(fill="White"),
+        axis.text.x = element_text(face="bold",
+                                   color="grey25",vjust = .6,                            size=9.5, angle=30)
+  )
+ggplotly(g2)
+
+g3<-ggplot(data=ALUNO_EC, aes(x=N_ATIVIDADE)) +
+  geom_bar() +
+  labs(x="",y="Quantidade de alunos") +
+  theme(panel.background = element_rect(fill="White"),
+        axis.text.x = element_text(face="bold",
+                                   color="grey25",vjust = .6,                            size=9.5, angle=30)
+  )
+ggplotly(g3)
+
+g4<-ggplot(data=ALUNO_EC, aes(x=N_IDADE)) +
+  geom_bar() +
+  labs(x="",y="Quantidade de alunos") +
+  theme(panel.background = element_rect(fill="White"),
+        axis.text.x = element_text(face="bold",
+                                   color="grey25",vjust = .6,                            size=9.5, angle=30)
+  )
+ggplotly(g4)
+
+g5<-ggplot(data=ALUNO_EC, aes(x=N_COR_RACA)) +
+  geom_bar() +
+  labs(x="",y="Quantidade de alunos") +
+  theme(panel.background = element_rect(fill="White"),
+        axis.text.x = element_text(face="bold",
+                                   color="grey25",vjust = .6,                            size=9.5, angle=30)
+  )
+ggplotly(g5)
+
+# DASHBOARD PAGINA 2
+### Gráfico de barras para cada variável de acordo com a variável de desfecho
+g6<-ggplot(data=ALUNO_EC, aes(x=N_SITUACAO,fill=N_SEXO)) +
+  geom_bar() +
+  labs(x="",y="Quantidade de alunos") +
+  scale_fill_manual(values = c("grey70","grey30")) +
+  theme(panel.background = element_rect(fill="White"),
+        axis.text.x = element_text(face="bold",
+                                   color="grey25",vjust = .6,                            size=9.5, angle=30)
+  )
+ggplotly(g6)
+
+g7<-ggplot(data=ALUNO_EC, aes(x=N_SITUACAO,fill=N_ATIVIDADE)) +
+  geom_bar() +
+  labs(x="",y="Quantidade de alunos") +
+  scale_fill_manual(values = c("grey70","grey30")) +
+  theme(panel.background = element_rect(fill="White"),
+        axis.text.x = element_text(face="bold",
+                                   color="grey25",vjust = .6,                            size=9.5, angle=30)
+  )
+ggplotly(g7)
+
+g8<-ggplot(data=ALUNO_EC, aes(x=N_SITUACAO,fill=N_IDADE)) +
+  geom_bar() +
+  labs(x="",y="Quantidade de alunos") +
+  scale_fill_manual(values = c("grey70","grey30","grey10")) +
+  theme(panel.background = element_rect(fill="White"),
+        axis.text.x = element_text(face="bold",
+                                   color="grey25",vjust = .6,                            size=9.5, angle=30)
+  )
+ggplotly(g8)
+
+g9<-ggplot(data=ALUNO_EC, aes(x=N_SITUACAO,fill=N_COR_RACA)) +
+  geom_bar() +
+  labs(x="",y="Quantidade de alunos") +
+  scale_fill_manual(values = c("yellow","grey70","brown","orange","black","green")) +
+  theme(panel.background = element_rect(fill="White"),
+        axis.text.x = element_text(face="bold",
+                                   color="grey25",vjust = .6,                            size=9.5, angle=30)
+  )
+ggplotly(g9)
+
+# DASHBOARD PAGINA 3 (acho que não é necessário)
+### Histograma para cada variável de acordo com o desfecho
+g10<-ggplot(data = ALUNO_EC, aes(x=NU_IDADE,fill=N_SITUACAO)) +   geom_histogram(bins = 10) +
+  labs(x="",y="") +
+  scale_fill_manual(values = c("grey10","grey70")) +
+  theme(panel.background = element_rect(fill="White")
+  )
+ggplotly(g10)
+
+# BANCO DE DADOS
+# Existem 461 observações no banco de dados utilizado. Pelo comando abaixo
+# é possívle obter as 15 primeiras observações do mesmo.
+kable(ALUNO_EC[1:15,]) %>%
+  kable_styling(c("striped"),full_width = F)
+
+#**Autores**
+
+#Acadêmicos: Flávio Palmeiro, Gabriel Alves e Liony Sena
+
+#Bacharelado em Estatística
+
+#Universidade Federal de Santa Maria
